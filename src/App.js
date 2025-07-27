@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const handleLogin = (token) => {
+    setToken(token);
+    localStorage.setItem('token', token);
+  };
+  const handleLogout = () => {
+    setToken(null);
+    localStorage.removeItem('token');
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register onLogin={handleLogin} />} />
+        <Route
+          path="/"
+          element={token
+            ? <Dashboard token={token} onLogout={handleLogout} />
+            : <Navigate to="/login" />}
+        />
+      </Routes>
+    </Router>
   );
 }
-
 export default App;
